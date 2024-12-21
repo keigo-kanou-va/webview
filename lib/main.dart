@@ -30,7 +30,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final controller = WebViewController()
-    ..loadRequest(Uri.parse('https://flutter.dev'))
+    ..loadRequest(Uri.parse('https://zenn.dev/koichi_51/articles/5a233d200b0d02'))
     ..setJavaScriptMode(JavaScriptMode.unrestricted);
 
   @override
