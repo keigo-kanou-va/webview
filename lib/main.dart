@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -29,18 +31,89 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
+
   final controller = WebViewController()
-    ..loadRequest(Uri.parse('https://zenn.dev/koichi_51/articles/5a233d200b0d02'))
-    ..setJavaScriptMode(JavaScriptMode.unrestricted);
+    ..loadRequest(Uri.parse('https://google.com'))
+    ..setJavaScriptMode(JavaScriptMode.unrestricted)
+    ..setBackgroundColor(Colors.white)
+    ..setNavigationDelegate(
+      NavigationDelegate(
+        onProgress: (int progress) {
+          log('progress: $progress' as num);
+        },
+        onPageStarted: (String url) {
+          log('page started: $url' as num);
+        },
+        onPageFinished: (String url) {
+          log('page finished: $url' as num);
+        },
+        onWebResourceError: (WebResourceError error) {
+          log('error: $error' as num);
+        },
+        onNavigationRequest: (NavigationRequest request) {
+          if (request.url.startsWith('https://www.youtube.com/')) {
+            return NavigationDecision.prevent;
+          }
+          return NavigationDecision.navigate;
+        },
+      ),
+    );
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Flutter WebView'),
-      ),
       body: SafeArea(
-        child: WebViewWidget(controller: controller),
+        child: Column(
+          verticalDirection: VerticalDirection.up,
+          children: [
+            Expanded(
+              child: WebViewWidget(
+                controller: controller,
+              ),
+            ),
+            SizedBox(
+              height: 50,
+              child: Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: IconButton(
+                      onPressed: () {
+                        controller.goBack();
+                      },
+                      icon: const Icon(
+                        Icons.arrow_back_ios,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: IconButton(
+                      onPressed: () {
+                        controller.goForward();
+                      },
+                      icon: const Icon(
+                        Icons.arrow_forward_ios,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: IconButton(
+                      onPressed: () {
+                        controller.reload();
+                      },
+                      icon: const Icon(
+                        Icons.replay,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
